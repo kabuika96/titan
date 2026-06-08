@@ -32,19 +32,9 @@ def main() -> None:
     print(f'Researching: "{question}"', file=sys.stderr)
     print(f"Model: {model_description()}", file=sys.stderr)
 
-    registry.clear()
-    registry.register(wikipedia.tool)
-    registry.register(arxiv.tool)
-    registry.register(fred.search_tool)
-    registry.register(fred.data_tool)
-    registry.register(web_search.tool)
-    registry.register(web_fetch.tool)
+    register_default_tools()
 
-    agent = {
-        "tools": ["wikipedia", "arxiv", "fred_search", "fred_data", "web_search", "web_fetch"],
-        "skills": ["skills/research.md"],
-        "verbose": not args.quiet or args.verbose,
-    }
+    agent = default_agent_config(verbose=not args.quiet or args.verbose)
     if args.max_steps is not None:
         agent["max_steps"] = args.max_steps
 
@@ -71,6 +61,24 @@ def load_local_env(path: str = ".env") -> None:
         value = value.strip().strip("'\"")
         if key and key not in os.environ:
             os.environ[key] = value
+
+
+def register_default_tools() -> None:
+    registry.clear()
+    registry.register(wikipedia.tool)
+    registry.register(arxiv.tool)
+    registry.register(fred.search_tool)
+    registry.register(fred.data_tool)
+    registry.register(web_search.tool)
+    registry.register(web_fetch.tool)
+
+
+def default_agent_config(verbose: bool = True) -> dict:
+    return {
+        "tools": ["wikipedia", "arxiv", "fred_search", "fred_data", "web_search", "web_fetch"],
+        "skills": ["skills/research.md"],
+        "verbose": verbose,
+    }
 
 
 def model_description() -> str:

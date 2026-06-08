@@ -1,0 +1,67 @@
+{
+  "name": "research-agent-reference",
+  "description": "Reference eval cases for the Titan research agent assessment.",
+  "cases": [
+    {
+      "id": "discount_window",
+      "question": "What is the Fed discount window?",
+      "expected_tools": ["wikipedia"],
+      "forbidden_tools": ["web_search", "web_fetch"],
+      "require_citation": true,
+      "must_include": ["discount window", "central bank"]
+    },
+    {
+      "id": "basel_iii",
+      "question": "What are the Basel III capital requirements?",
+      "expected_tools": ["wikipedia"],
+      "forbidden_tools": ["web_search", "web_fetch"],
+      "require_citation": true,
+      "must_include": ["Basel III", "capital"]
+    },
+    {
+      "id": "credit_risk_ml",
+      "question": "What recent academic research exists on using machine learning for credit risk?",
+      "expected_tools": ["arxiv"],
+      "require_citation": true,
+      "must_include": ["credit risk", "machine learning"]
+    },
+    {
+      "id": "monetary_policy_2008_vs_covid",
+      "question": "How did the Federal Reserve's monetary policy response differ between the 2008 financial crisis and the COVID-19 pandemic?",
+      "expected_tools": ["wikipedia"],
+      "require_citation": true,
+      "must_include": ["2008", "COVID"]
+    },
+    {
+      "id": "us_unemployment_rate",
+      "question": "What is the current US unemployment rate and how has it changed recently?",
+      "expected_tools": ["fred_search", "fred_data"],
+      "required_env": ["FRED_API_KEY"],
+      "require_citation": true,
+      "must_include": ["unemployment"]
+    },
+    {
+      "id": "yield_curve_papers",
+      "question": "Explain the relationship between yield curve inversions and recessions, and include recent academic papers.",
+      "expected_tools": ["wikipedia", "arxiv"],
+      "require_citation": true,
+      "must_include": ["yield curve", "recession"]
+    },
+    {
+      "id": "restaurant_out_of_scope",
+      "question": "What is the best restaurant in New York City?",
+      "expected_tools": [],
+      "forbidden_tools": ["wikipedia", "arxiv", "fred_search", "fred_data", "web_search", "web_fetch"],
+      "expect_out_of_scope": true,
+      "require_citation": false,
+      "must_include": ["outside"]
+    },
+    {
+      "id": "quantum_banking",
+      "question": "What are the implications of quantum computing for banking?",
+      "expected_tools": ["wikipedia", "arxiv"],
+      "require_citation": true,
+      "must_include": ["quantum", "banking"]
+    }
+  ]
+}

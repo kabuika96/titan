@@ -561,3 +561,7 @@ USER: push to a new public repo at kabuika96/titan
 
 ASSISTANT: Created public GitHub repository kabuika96/titan, initialized local git on main, committed the research agent framework, pushed to origin/main, and verified repository visibility as PUBLIC.
 
+USER: let's add eval. This should be a specific command that runs against the dataset, which we should build, and outputs a concise result.
+
+ASSISTANT: Added eval.py as a concise eval command, created evals/research_dataset.json with reference cases, reused the default agent tool registration/configuration, documented eval commands, and verified list/compile plus one out-of-scope and one sourced Wikipedia eval smoke run.
+

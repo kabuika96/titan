@@ -24,6 +24,8 @@ Files:
 - `harness/provider.py`: Ollama/Gemini wrapper with manual function calling, token usage, and retry.
 - `harness/loop.py`: bounded agentic state machine with pruning and compaction.
 - `harness/tracer.py`: JSON traces under `traces/`.
+- `eval.py`: eval runner for the checked-in reference dataset.
+- `evals/research_dataset.json`: eval cases and deterministic pass/fail checks.
 - `tools/wikipedia.py`: MediaWiki search plus Wikipedia page summary.
 - `tools/arxiv.py`: arXiv Atom search parser.
 - `tools/fred.py`: FRED series search and observation retrieval.
@@ -146,6 +148,36 @@ Use `--quiet` to suppress progress notes:
 
 Each run writes a trace file to `traces/{timestamp}_{question}.json`.
 
+## Eval
+
+Run the checked-in eval dataset:
+
+```bash
+.venv/bin/python eval.py
+```
+
+The eval suppresses progress narration, runs each case through the same agent
+loop, reads the trace JSON, and scores deterministic checks such as expected
+tools, forbidden tools, required citations, out-of-scope handling, and key
+answer terms. Output is intentionally compact:
+
+```text
+Eval: research-agent-reference | model: ollama/qwen3:14b (...) | cases: 8
+PASS discount_window                    18.4s tools=wikipedia
+SKIP us_unemployment_rate                0.0s tools=- | missing env: FRED_API_KEY
+Summary: 7 pass, 0 fail, 1 skip in 144.8s
+```
+
+Useful narrower runs:
+
+```bash
+.venv/bin/python eval.py --list
+.venv/bin/python eval.py --case discount_window
+.venv/bin/python eval.py --limit 2 --max-steps 4
+```
+
+Eval traces are written under `traces/eval/`, which is ignored by git.
+
 ## Reference Questions
 
 | # | Question | Expected tools | Expected behavior |
@@ -174,6 +206,9 @@ Completed locally in this shell:
 - Direct `web_search` error-path smoke test against DuckDuckGo rate limiting
 - Direct `web_fetch` smoke test against a public HTML page with trafilatura extraction
 - Loop URL-discovery guard accepts URLs from tool results and rejects undiscovered URLs
+- Eval dataset listing via `.venv/bin/python eval.py --list`
+- Eval smoke case for out-of-scope handling via `.venv/bin/python eval.py --case restaurant_out_of_scope --max-steps 3`
+- Eval smoke case for sourced Wikipedia usage via `.venv/bin/python eval.py --case discount_window --max-steps 4`
 - Mocked provider loop: provider requests `wikipedia`, loop executes it, tracer writes JSON, final answer returns on stdout
 - CLI missing-key path exits cleanly with `GEMINI_API_KEY is not configured`
 - Real Gemini loop against `What is Basel III?`
