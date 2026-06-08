@@ -565,3 +565,9 @@ USER: let's add eval. This should be a specific command that runs against the da
 
 ASSISTANT: Added eval.py as a concise eval command, created evals/research_dataset.json with reference cases, reused the default agent tool registration/configuration, documented eval commands, and verified list/compile plus one out-of-scope and one sourced Wikipedia eval smoke run.
 
+USER: "Create a benchmark of at least 15 questions spanning different types: factual lookup, multi-source synthesis, and unanswerable/out-of-scope questions For each question, define what a good answer looks like (expected sources, key facts that should appear, facts that should NOT appear)" did you do this?
+
+ASSISTANT: No. The previous eval had only 8 cases and did not explicitly define expected sources, key facts, and forbidden facts for at least 15 benchmark questions. Expanding the benchmark and scorer now.
+
+ASSISTANT: Expanded the eval dataset into a 16-question benchmark spanning factual lookup, academic search, multi-source synthesis, data retrieval, and unanswerable/out-of-scope cases. Each case now defines expected sources, key facts, and forbidden facts, and eval.py scores those fields directly. Verified JSON shape, compile, listing, and one factual plus one out-of-scope smoke run.
+

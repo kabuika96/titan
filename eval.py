@@ -152,6 +152,9 @@ def score_case(case: dict[str, Any], answer: str, trace: dict[str, Any]) -> list
     if not answer_text.strip():
         failures.append("empty answer")
 
+    for source in case.get("expected_sources", []):
+        failures.extend(source_failures(source, answer_text, tools_used))
+
     for tool in case.get("expected_tools", []):
         if tool not in tools_used:
             failures.append(f"missing tool {tool}")
@@ -163,13 +166,13 @@ def score_case(case: dict[str, Any], answer: str, trace: dict[str, Any]) -> list
     if case.get("require_citation", True) and not has_citation(answer_text):
         failures.append("missing citation")
 
-    for term in case.get("must_include", []):
+    for term in list(case.get("must_include", [])) + list(case.get("key_facts", [])):
         if term.lower() not in answer_text.lower():
-            failures.append(f"missing term '{term}'")
+            failures.append(f"missing fact '{term}'")
 
-    for term in case.get("must_not_include", []):
+    for term in list(case.get("must_not_include", [])) + list(case.get("forbidden_facts", [])):
         if term.lower() in answer_text.lower():
-            failures.append(f"forbidden term '{term}'")
+            failures.append(f"forbidden fact '{term}'")
 
     if case.get("expect_out_of_scope"):
         if tools_used:
@@ -181,7 +184,32 @@ def score_case(case: dict[str, Any], answer: str, trace: dict[str, Any]) -> list
     return failures
 
 
-def has_citation(text: str) -> bool:
+def source_failures(source: Any, answer_text: str, tools_used: set[str]) -> list[str]:
+    if isinstance(source, str):
+        source = {"tool": source}
+    if not isinstance(source, dict):
+        return [f"invalid expected source {source!r}"]
+
+    failures = []
+    tool = source.get("tool")
+    if tool and tool not in tools_used:
+        failures.append(f"missing source tool {tool}")
+
+    citation_prefix = source.get("citation_prefix")
+    if citation_prefix and not has_citation(answer_text, citation_prefix):
+        failures.append(f"missing {citation_prefix} citation")
+
+    citation_contains = source.get("citation_contains")
+    if citation_contains and citation_contains.lower() not in answer_text.lower():
+        failures.append(f"missing source detail '{citation_contains}'")
+
+    return failures
+
+
+def has_citation(text: str, prefix: str | None = None) -> bool:
+    if prefix:
+        escaped = re.escape(prefix)
+        return bool(re.search(rf"\[{escaped}:[^\]]+\]\(https?://[^)]+\)", text))
     return bool(re.search(r"\[(Wikipedia|arXiv|FRED|Web):[^\]]+\]\(https?://[^)]+\)", text))
 
 

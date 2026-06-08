@@ -158,14 +158,17 @@ Run the checked-in eval dataset:
 
 The eval suppresses progress narration, runs each case through the same agent
 loop, reads the trace JSON, and scores deterministic checks such as expected
-tools, forbidden tools, required citations, out-of-scope handling, and key
-answer terms. Output is intentionally compact:
+sources, expected tools, forbidden tools, required citations, out-of-scope
+handling, key facts, and forbidden facts. The checked-in benchmark currently
+has 16 questions across factual lookup, academic search, multi-source synthesis,
+data retrieval, and unanswerable/out-of-scope handling. Output is intentionally
+compact:
 
 ```text
-Eval: research-agent-reference | model: ollama/qwen3:14b (...) | cases: 8
+Eval: research-agent-benchmark | model: ollama/qwen3:14b (...) | cases: 16
 PASS discount_window                    18.4s tools=wikipedia
 SKIP us_unemployment_rate                0.0s tools=- | missing env: FRED_API_KEY
-Summary: 7 pass, 0 fail, 1 skip in 144.8s
+Summary: 14 pass, 0 fail, 2 skip in 144.8s
 ```
 
 Useful narrower runs:
@@ -206,6 +209,7 @@ Completed locally in this shell:
 - Direct `web_search` error-path smoke test against DuckDuckGo rate limiting
 - Direct `web_fetch` smoke test against a public HTML page with trafilatura extraction
 - Loop URL-discovery guard accepts URLs from tool results and rejects undiscovered URLs
+- Eval benchmark JSON validation: 16 cases and every case defines expected sources, key facts, and forbidden facts
 - Eval dataset listing via `.venv/bin/python eval.py --list`
 - Eval smoke case for out-of-scope handling via `.venv/bin/python eval.py --case restaurant_out_of_scope --max-steps 3`
 - Eval smoke case for sourced Wikipedia usage via `.venv/bin/python eval.py --case discount_window --max-steps 4`

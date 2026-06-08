@@ -1,67 +1,211 @@
 {
-  "name": "research-agent-reference",
-  "description": "Reference eval cases for the Titan research agent assessment.",
+  "name": "research-agent-benchmark",
+  "description": "Benchmark cases for factual lookup, multi-source synthesis, data retrieval, and out-of-scope handling.",
   "cases": [
     {
       "id": "discount_window",
+      "type": "factual_lookup",
       "question": "What is the Fed discount window?",
+      "expected_sources": [
+        {"tool": "wikipedia", "citation_prefix": "Wikipedia", "citation_contains": "Discount window"}
+      ],
       "expected_tools": ["wikipedia"],
       "forbidden_tools": ["web_search", "web_fetch"],
       "require_citation": true,
-      "must_include": ["discount window", "central bank"]
+      "key_facts": ["discount window", "central bank", "liquidity"],
+      "forbidden_facts": ["consumer loan", "permanent capital"]
     },
     {
       "id": "basel_iii",
+      "type": "factual_lookup",
       "question": "What are the Basel III capital requirements?",
+      "expected_sources": [
+        {"tool": "wikipedia", "citation_prefix": "Wikipedia", "citation_contains": "Basel III"}
+      ],
       "expected_tools": ["wikipedia"],
       "forbidden_tools": ["web_search", "web_fetch"],
       "require_citation": true,
-      "must_include": ["Basel III", "capital"]
+      "key_facts": ["Basel III", "capital", "risk-weighted"],
+      "forbidden_facts": ["eliminated capital requirements", "Basel I only"]
+    },
+    {
+      "id": "dodd_frank",
+      "type": "factual_lookup",
+      "question": "What is the Dodd-Frank Act?",
+      "expected_sources": [
+        {"tool": "wikipedia", "citation_prefix": "Wikipedia", "citation_contains": "Dodd-Frank"}
+      ],
+      "expected_tools": ["wikipedia"],
+      "forbidden_tools": ["web_search", "web_fetch"],
+      "require_citation": true,
+      "key_facts": ["Dodd-Frank", "financial crisis", "financial regulation"],
+      "forbidden_facts": ["European Union law only", "created before 2000"]
+    },
+    {
+      "id": "fdic",
+      "type": "factual_lookup",
+      "question": "What does the FDIC do?",
+      "expected_sources": [
+        {"tool": "wikipedia", "citation_prefix": "Wikipedia", "citation_contains": "Federal Deposit Insurance Corporation"}
+      ],
+      "expected_tools": ["wikipedia"],
+      "forbidden_tools": ["web_search", "web_fetch"],
+      "require_citation": true,
+      "key_facts": ["deposit insurance", "bank", "failures"],
+      "forbidden_facts": ["insures investment losses", "guarantees stock returns"]
+    },
+    {
+      "id": "credit_default_swap",
+      "type": "factual_lookup",
+      "question": "What is a credit default swap?",
+      "expected_sources": [
+        {"tool": "wikipedia", "citation_prefix": "Wikipedia", "citation_contains": "Credit default swap"}
+      ],
+      "expected_tools": ["wikipedia"],
+      "forbidden_tools": ["web_search", "web_fetch"],
+      "require_citation": true,
+      "key_facts": ["credit default swap", "derivative", "default"],
+      "forbidden_facts": ["equity ownership", "bank deposit"]
     },
     {
       "id": "credit_risk_ml",
+      "type": "academic_search",
       "question": "What recent academic research exists on using machine learning for credit risk?",
+      "expected_sources": [
+        {"tool": "arxiv", "citation_prefix": "arXiv"}
+      ],
       "expected_tools": ["arxiv"],
       "require_citation": true,
-      "must_include": ["credit risk", "machine learning"]
+      "key_facts": ["credit risk", "machine learning", "model"],
+      "forbidden_facts": ["guarantees no defaults", "replaces all underwriting judgment"]
+    },
+    {
+      "id": "basel_iii_vs_dodd_frank",
+      "type": "multi_source_synthesis",
+      "question": "Compare Basel III and the Dodd-Frank Act for a bank executive.",
+      "expected_sources": [
+        {"tool": "wikipedia", "citation_prefix": "Wikipedia", "citation_contains": "Basel III"},
+        {"tool": "wikipedia", "citation_prefix": "Wikipedia", "citation_contains": "Dodd-Frank"}
+      ],
+      "expected_tools": ["wikipedia"],
+      "forbidden_tools": ["web_search", "web_fetch"],
+      "require_citation": true,
+      "key_facts": ["Basel III", "Dodd-Frank", "capital", "regulation"],
+      "forbidden_facts": ["same regulation", "identical requirements"]
     },
     {
       "id": "monetary_policy_2008_vs_covid",
+      "type": "multi_source_synthesis",
       "question": "How did the Federal Reserve's monetary policy response differ between the 2008 financial crisis and the COVID-19 pandemic?",
+      "expected_sources": [
+        {"tool": "wikipedia", "citation_prefix": "Wikipedia"}
+      ],
       "expected_tools": ["wikipedia"],
       "require_citation": true,
-      "must_include": ["2008", "COVID"]
-    },
-    {
-      "id": "us_unemployment_rate",
-      "question": "What is the current US unemployment rate and how has it changed recently?",
-      "expected_tools": ["fred_search", "fred_data"],
-      "required_env": ["FRED_API_KEY"],
-      "require_citation": true,
-      "must_include": ["unemployment"]
+      "key_facts": ["2008", "COVID", "Federal Reserve"],
+      "forbidden_facts": ["exactly the same response", "no liquidity support"]
     },
     {
       "id": "yield_curve_papers",
+      "type": "multi_source_synthesis",
       "question": "Explain the relationship between yield curve inversions and recessions, and include recent academic papers.",
+      "expected_sources": [
+        {"tool": "wikipedia", "citation_prefix": "Wikipedia"},
+        {"tool": "arxiv", "citation_prefix": "arXiv"}
+      ],
       "expected_tools": ["wikipedia", "arxiv"],
       "require_citation": true,
-      "must_include": ["yield curve", "recession"]
+      "key_facts": ["yield curve", "inversion", "recession"],
+      "forbidden_facts": ["always causes recessions", "perfect predictor"]
+    },
+    {
+      "id": "quantum_banking",
+      "type": "multi_source_synthesis",
+      "question": "What are the implications of quantum computing for banking?",
+      "expected_sources": [
+        {"tool": "wikipedia", "citation_prefix": "Wikipedia"},
+        {"tool": "arxiv", "citation_prefix": "arXiv"}
+      ],
+      "expected_tools": ["wikipedia", "arxiv"],
+      "require_citation": true,
+      "key_facts": ["quantum", "banking", "cryptography"],
+      "forbidden_facts": ["currently replaces all banking systems", "risk-free"]
+    },
+    {
+      "id": "unemployment_rate",
+      "type": "data_retrieval",
+      "question": "What is the current US unemployment rate and how has it changed recently?",
+      "expected_sources": [
+        {"tool": "fred_search", "citation_prefix": "FRED"},
+        {"tool": "fred_data", "citation_prefix": "FRED", "citation_contains": "UNRATE"}
+      ],
+      "expected_tools": ["fred_search", "fred_data"],
+      "required_env": ["FRED_API_KEY"],
+      "require_citation": true,
+      "key_facts": ["unemployment", "rate", "recent"],
+      "forbidden_facts": ["stock price", "GDP growth rate"]
+    },
+    {
+      "id": "federal_funds_rate",
+      "type": "data_retrieval",
+      "question": "What is the latest effective federal funds rate in FRED?",
+      "expected_sources": [
+        {"tool": "fred_search", "citation_prefix": "FRED"},
+        {"tool": "fred_data", "citation_prefix": "FRED", "citation_contains": "FEDFUNDS"}
+      ],
+      "expected_tools": ["fred_search", "fred_data"],
+      "required_env": ["FRED_API_KEY"],
+      "require_citation": true,
+      "key_facts": ["federal funds", "rate", "latest"],
+      "forbidden_facts": ["mortgage rate", "credit card APR"]
     },
     {
       "id": "restaurant_out_of_scope",
+      "type": "out_of_scope",
       "question": "What is the best restaurant in New York City?",
+      "expected_sources": [],
       "expected_tools": [],
       "forbidden_tools": ["wikipedia", "arxiv", "fred_search", "fred_data", "web_search", "web_fetch"],
       "expect_out_of_scope": true,
       "require_citation": false,
-      "must_include": ["outside"]
+      "key_facts": ["outside"],
+      "forbidden_facts": ["Le Bernardin", "Eleven Madison Park"]
     },
     {
-      "id": "quantum_banking",
-      "question": "What are the implications of quantum computing for banking?",
-      "expected_tools": ["wikipedia", "arxiv"],
-      "require_citation": true,
-      "must_include": ["quantum", "banking"]
+      "id": "future_fed_prediction",
+      "type": "unanswerable",
+      "question": "What will the Federal Reserve definitely do at its next meeting?",
+      "expected_sources": [],
+      "expected_tools": [],
+      "forbidden_tools": ["wikipedia", "arxiv", "fred_search", "fred_data", "web_search", "web_fetch"],
+      "expect_out_of_scope": true,
+      "require_citation": false,
+      "key_facts": ["future", "cannot"],
+      "forbidden_facts": ["definitely raise", "definitely cut", "guaranteed"]
+    },
+    {
+      "id": "private_account_balance",
+      "type": "out_of_scope",
+      "question": "What is my bank account balance?",
+      "expected_sources": [],
+      "expected_tools": [],
+      "forbidden_tools": ["wikipedia", "arxiv", "fred_search", "fred_data", "web_search", "web_fetch"],
+      "expect_out_of_scope": true,
+      "require_citation": false,
+      "key_facts": ["outside", "personal"],
+      "forbidden_facts": ["$1", "$100", "$1,000"]
+    },
+    {
+      "id": "internal_memo",
+      "type": "unanswerable",
+      "question": "What does the internal Titan Banking risk memo say about Q4 loan losses?",
+      "expected_sources": [],
+      "expected_tools": [],
+      "forbidden_tools": ["wikipedia", "arxiv", "fred_search", "fred_data", "web_search", "web_fetch"],
+      "expect_out_of_scope": true,
+      "require_citation": false,
+      "key_facts": ["internal", "cannot access"],
+      "forbidden_facts": ["according to the memo", "Q4 loan losses will be"]
     }
   ]
 }
