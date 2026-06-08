@@ -571,3 +571,7 @@ ASSISTANT: No. The previous eval had only 8 cases and did not explicitly define 
 
 ASSISTANT: Expanded the eval dataset into a 16-question benchmark spanning factual lookup, academic search, multi-source synthesis, data retrieval, and unanswerable/out-of-scope cases. Each case now defines expected sources, key facts, and forbidden facts, and eval.py scores those fields directly. Verified JSON shape, compile, listing, and one factual plus one out-of-scope smoke run.
 
+USER: To the readme file, add a section for what I'd do if more time: "I'd iterate over the skills until the evals have perfect passes. Right now a bunch of failures are caught by evals; which is actually great to see."
+
+ASSISTANT: Added an "If I Had More Time" README section explaining that the next step would be iterating on skills until evals pass perfectly, and that current eval failures are useful because they expose gaps.
+

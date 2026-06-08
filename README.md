@@ -181,6 +181,12 @@ Useful narrower runs:
 
 Eval traces are written under `traces/eval/`, which is ignored by git.
 
+## If I Had More Time
+
+I would iterate over the skills until the evals have perfect passes. Right now a
+bunch of failures are caught by evals, which is actually great to see: the
+benchmark is doing its job by making gaps visible and actionable.
+
 ## Reference Questions
 
 | # | Question | Expected tools | Expected behavior |
