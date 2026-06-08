@@ -1,0 +1,2 @@
+"""Small research-agent harness."""
+
